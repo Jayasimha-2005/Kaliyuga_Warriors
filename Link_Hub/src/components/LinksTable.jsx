@@ -10,6 +10,7 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
   const [filteredLinks, setFilteredLinks] = useState([])
   const [deletingId, setDeletingId] = useState(null)
   const [togglingId, setTogglingId] = useState(null)
+  const [deleteCandidate, setDeleteCandidate] = useState(null)
 
   // Filter and sort links
   useEffect(() => {
@@ -39,12 +40,20 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
     setFilteredLinks(result)
   }, [links, searchTerm, sortMonth])
 
-  // Handle delete with confirmation
-  const handleDelete = async (linkId) => {
-    if (!window.confirm('Are you sure you want to delete this link? This action cannot be undone.')) {
-      return
-    }
+  const openDeleteDialog = (link) => {
+    setDeleteCandidate(link)
+  }
 
+  const closeDeleteDialog = () => {
+    if (deletingId) return
+    setDeleteCandidate(null)
+  }
+
+  // Handle delete after confirmation
+  const confirmDelete = async () => {
+    if (!deleteCandidate) return
+
+    const linkId = deleteCandidate.id
     setDeletingId(linkId)
 
     try {
@@ -58,6 +67,7 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
       showToast(error.message || 'Failed to delete link', 'error')
     } finally {
       setDeletingId(null)
+      setDeleteCandidate(null)
     }
   }
 
@@ -199,7 +209,7 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
                     </button>
                     <button
                       className="action-btn delete-btn"
-                      onClick={() => handleDelete(link.id)}
+                      onClick={() => openDeleteDialog(link)}
                       disabled={deletingId === link.id}
                       title="Delete link"
                     >
@@ -214,6 +224,50 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteCandidate && (
+        <div className="delete-modal-backdrop" onClick={closeDeleteDialog}>
+          <div
+            className="delete-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-modal-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="delete-modal-icon">!</div>
+            <h3 id="delete-modal-title">Delete this link?</h3>
+            <p>
+              {`"${deleteCandidate.title}" will be permanently removed. This action cannot be undone.`}
+            </p>
+
+            <div className="delete-modal-actions">
+              <button
+                type="button"
+                className="delete-modal-btn secondary"
+                onClick={closeDeleteDialog}
+                disabled={deletingId === deleteCandidate.id}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="delete-modal-btn danger"
+                onClick={confirmDelete}
+                disabled={deletingId === deleteCandidate.id}
+              >
+                {deletingId === deleteCandidate.id ? (
+                  <>
+                    <FaSpinner className="spinner" /> Deleting...
+                  </>
+                ) : (
+                  'Delete'
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

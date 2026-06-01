@@ -1,13 +1,17 @@
 .footer {
-  margin: 2rem 1rem 1rem;
-  border-radius: 12px;
+  margin: 0;
   margin-top: auto;
+  border-radius: 0;
+  background-color: #fff6ee; /* warm light orange to match theme */
+  border-top: 1px solid rgba(255,138,14,0.06);
+  color: var(--text-primary);
 }
 
 .footer-container {
+  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem 1.25rem;
 }
 
 .footer-content {
@@ -23,20 +27,20 @@
   color: #64b5f6;
 }
 
-.footer-section h4 {
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-  color: #90caf9;
+.footer-section h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--accent);
 }
-
+.footer-section h4 {
+  font-size: 1.05rem;
+  margin-bottom: 0.6rem;
+  color: rgba(15,23,42,0.7);
+}
 .footer-section p {
   font-size: 0.95rem;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.footer-section ul {
-  list-style: none;
+  color: var(--muted);
 }
 
 .footer-section ul li {
@@ -44,13 +48,13 @@
 }
 
 .footer-section ul li a {
-  color: rgba(255, 255, 255, 0.7);
-  transition: all 0.3s ease;
+  color: rgba(15,23,42,0.8);
+  transition: all 0.2s ease;
   padding: 0.25rem 0;
 }
 
 .footer-section ul li a:hover {
-  color: #64b5f6;
+  color: var(--accent);
   padding-left: 0.5rem;
 }
 
@@ -64,26 +68,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: rgba(100, 181, 246, 0.2);
-  color: #64b5f6;
-  transition: all 0.3s ease;
-  font-size: 1.2rem;
+  background: rgba(255,122,0,0.12);
+  color: var(--accent);
+  transition: all 0.18s ease;
+  font-size: 1.15rem;
 }
 
 .social-icon:hover {
-  background: rgba(100, 181, 246, 0.4);
-  transform: translateY(-5px);
-  color: #fff;
+  background: rgba(255,122,0,0.2);
+  transform: translateY(-4px);
+  color: white;
 }
 
 .footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,138,14,0.04);
+  padding-top: 1rem;
   text-align: center;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(15,23,42,0.6);
   font-size: 0.95rem;
 }
 

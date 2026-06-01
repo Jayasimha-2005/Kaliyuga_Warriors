@@ -4,12 +4,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(15, 23, 42, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.2s ease;
+  padding: 1rem;
 }
 
 @keyframes fadeIn {
@@ -22,21 +23,22 @@
 }
 
 .modal-content {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  max-width: 600px;
-  width: 90%;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 20px;
+  max-width: 640px;
+  width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  animation: slideUp 0.3s ease;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+  animation: slideUp 0.24s ease;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+  color: #0f172a;
 }
 
 @keyframes slideUp {
   from {
-    transform: translateY(50px);
+    transform: translateY(24px);
     opacity: 0;
   }
   to {
@@ -49,31 +51,32 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.75rem 2rem 1.25rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.95);
 }
 
 .modal-header h2 {
   margin: 0;
   font-size: 1.5rem;
-  color: #fff;
+  color: #0f172a;
 }
 
 .modal-close {
   background: none;
   border: none;
-  color: #fff;
+  color: #475569;
   font-size: 24px;
   cursor: pointer;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
+  opacity: 0.85;
+  transition: color 0.2s ease, opacity 0.2s ease;
 }
 
 .modal-close:hover:not(:disabled) {
+  color: #0f172a;
   opacity: 1;
 }
 
@@ -82,10 +85,10 @@
 }
 
 .modal-content .form {
-  padding: 2rem;
+  padding: 1.75rem 2rem 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.35rem;
 }
 
 .modal-content .form-group {
@@ -96,35 +99,35 @@
 
 .modal-content .form-group label {
   font-size: 0.95rem;
-  font-weight: 600;
-  color: #90caf9;
+  font-weight: 700;
+  color: #334155;
 }
 
 .modal-content .form-group input,
 .modal-content .form-group textarea,
 .modal-content .form-group select {
-  padding: 0.75rem;
-  border: 1px solid rgba(100, 181, 246, 0.3);
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
   font-size: 0.95rem;
-  border-radius: 6px;
+  border-radius: 12px;
   outline: none;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   font-family: inherit;
 }
 
 .modal-content .form-group input::placeholder,
 .modal-content .form-group textarea::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: #94a3b8;
 }
 
 .modal-content .form-group input:focus,
 .modal-content .form-group textarea:focus,
 .modal-content .form-group select:focus {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(100, 181, 246, 0.6);
-  box-shadow: 0 0 10px rgba(100, 181, 246, 0.2);
+  background: white;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(255, 184, 107, 0.14);
 }
 
 .modal-content .form-group input:disabled,
@@ -136,17 +139,17 @@
 
 .modal-content .form-group textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 96px;
 }
 
 .modal-content .form-group select {
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 1.25rem;
-  padding-right: 2.5rem;
+  background-position: right 0.9rem center;
+  background-size: 1.15rem;
+  padding-right: 2.8rem;
 }
 
 .form-row {
@@ -159,26 +162,26 @@
   flex-direction: row;
   align-items: center;
   gap: 0.75rem;
-  margin: 0.5rem 0;
+  margin: 0.25rem 0 0;
 }
 
 .form-checkbox input {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #64b5f6;
+  accent-color: #2563eb;
 }
 
 .form-checkbox label {
   margin: 0;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+  color: #334155;
 }
 
 .error-message {
   font-size: 0.85rem;
-  color: #ff5252;
-  margin-top: -0.25rem;
+  color: #dc2626;
+  margin-top: -0.2rem;
 }
 
 .modal-buttons {
@@ -186,17 +189,17 @@
   gap: 1rem;
   justify-content: flex-end;
   padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(226, 232, 240, 0.95);
 }
 
 .button {
-  padding: 0.75rem 1.5rem;
+  padding: 0.85rem 1.5rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 12px;
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -204,24 +207,24 @@
 }
 
 .button.primary {
-  background: linear-gradient(135deg, #64b5f6, #7c4dff);
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
   color: white;
-  box-shadow: 0 4px 15px rgba(100, 181, 246, 0.3);
+  box-shadow: 0 12px 28px rgba(255, 122, 0, 0.22);
 }
 
 .button.primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(100, 181, 246, 0.5);
+  box-shadow: 0 16px 34px rgba(255, 122, 0, 0.28);
 }
 
 .button.secondary {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: white;
+  color: #334155;
+  border: 1px solid #cbd5e1;
 }
 
 .button.secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
+  background: #f8fbff;
 }
 
 .button:disabled {
@@ -231,12 +234,12 @@
 
 @media (max-width: 600px) {
   .modal-content {
-    width: 95%;
+    width: 100%;
     max-height: 95vh;
   }
 
   .modal-header {
-    padding: 1.5rem;
+    padding: 1.35rem 1.25rem 1rem;
   }
 
   .modal-header h2 {
@@ -244,7 +247,7 @@
   }
 
   .modal-content .form {
-    padding: 1.5rem;
+    padding: 1.25rem;
   }
 
   .form-row {

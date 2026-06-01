@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FaPlus, FaLink, FaSignOutAlt, FaHome, FaSpinner } from 'react-icons/fa'
+import { FaPlus, FaLink, FaSignOutAlt, FaHome, FaSpinner, FaEllipsisV, FaTimes } from 'react-icons/fa'
 import { useAuth } from '../hooks/useCustomHooks'
 import { subscribeToLinks } from '../services/linkService'
 import AddLinkForm from '../components/AddLinkForm'
@@ -17,6 +17,7 @@ function AdminDashboard() {
   const [editingLink, setEditingLink] = useState(null)
   const [showEditModal, setShowEditModal] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true)
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
@@ -55,13 +56,18 @@ function AdminDashboard() {
       <ToastContainer />
 
       {/* Sidebar */}
-      <aside className={`sidebar glass ${sidebarOpen ? 'open' : ''}`}>
+      <aside className={`sidebar glass ${sidebarOpen ? 'open' : ''} ${sidebarCollapsed ? 'collapsed' : 'expanded'}`}>
         <div className="sidebar-content">
           <div className="sidebar-header">
-            <div className="sidebar-logo">
-              <FaLink />
-              <span>Link Hub</span>
-            </div>
+            <button
+              type="button"
+              className="sidebar-collapse-toggle"
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {sidebarCollapsed ? <FaEllipsisV /> : <FaTimes />}
+            </button>
           </div>
 
           <nav className="sidebar-nav">
@@ -233,7 +239,7 @@ function AdminDashboard() {
       )}
 
       {/* Mobile Menu Toggle */}
-      <button className="mobile-menu-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
+      <button className="mobile-menu-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Toggle menu">
         <span></span>
         <span></span>
         <span></span>

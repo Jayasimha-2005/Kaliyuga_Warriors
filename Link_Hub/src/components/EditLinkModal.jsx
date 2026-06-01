@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { FaTimes, FaSpinner } from 'react-icons/fa'
 import { updateLink } from '../services/linkService'
 import { showToast } from './Toast'
+import { isValidInstagramReelUrl } from '../utils/helpers'
 import './EditLinkModal.css'
 
 function EditLinkModal({ link, onClose, onLinkUpdated }) {
@@ -9,8 +10,10 @@ function EditLinkModal({ link, onClose, onLinkUpdated }) {
     title: '',
     description: '',
     url: '',
+    reelUrl: '',
     category: 'general',
     month: '',
+    featured: false,
     isPublished: false
   })
   const [errors, setErrors] = useState({})
@@ -30,8 +33,10 @@ function EditLinkModal({ link, onClose, onLinkUpdated }) {
         title: link.title || '',
         description: link.description || '',
         url: link.url || '',
+        reelUrl: link.reelUrl || '',
         category: link.category || 'general',
         month: link.month || new Date().toISOString().substring(0, 7),
+        featured: Boolean(link.featured),
         isPublished: link.isPublished || false
       })
     }
@@ -47,6 +52,11 @@ function EditLinkModal({ link, onClose, onLinkUpdated }) {
     }
   }
 
+  const isValidOptionalReelUrl = (reelUrl) => {
+    if (!reelUrl.trim()) return true
+    return isValidInstagramReelUrl(reelUrl)
+  }
+
   // Validate form
   const validateForm = () => {
     const newErrors = {}
@@ -59,6 +69,10 @@ function EditLinkModal({ link, onClose, onLinkUpdated }) {
       newErrors.url = 'URL is required'
     } else if (!isValidUrl(formData.url)) {
       newErrors.url = 'Please enter a valid URL'
+    }
+
+    if (!isValidOptionalReelUrl(formData.reelUrl)) {
+      newErrors.reelUrl = 'Please enter a valid Instagram Reel URL'
     }
 
     if (!formData.description.trim()) {
@@ -153,6 +167,21 @@ function EditLinkModal({ link, onClose, onLinkUpdated }) {
             {errors.url && <span className="error-message">{errors.url}</span>}
           </div>
 
+          {/* Instagram Reel URL */}
+          <div className="form-group">
+            <label htmlFor="reelUrl">Instagram Reel URL (optional)</label>
+            <input
+              type="url"
+              id="reelUrl"
+              name="reelUrl"
+              value={formData.reelUrl}
+              onChange={handleChange}
+              placeholder="https://www.instagram.com/reel/..."
+              disabled={loading}
+            />
+            {errors.reelUrl && <span className="error-message">{errors.reelUrl}</span>}
+          </div>
+
           {/* Description */}
           <div className="form-group">
             <label htmlFor="description">Description *</label>
@@ -219,6 +248,18 @@ function EditLinkModal({ link, onClose, onLinkUpdated }) {
               disabled={loading}
             />
             <label htmlFor="isPublished">Publish this link</label>
+          </div>
+
+          <div className="form-group form-checkbox">
+            <input
+              type="checkbox"
+              id="featured"
+              name="featured"
+              checked={formData.featured}
+              onChange={handleChange}
+              disabled={loading}
+            />
+            <label htmlFor="featured">Mark as featured</label>
           </div>
 
           {/* Buttons */}

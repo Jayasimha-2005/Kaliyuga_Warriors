@@ -29,6 +29,8 @@ const normalizeLink = (docSnapshot) => {
   return {
     id: docSnapshot.id,
     ...data,
+    reelUrl: data.reelUrl || '',
+    featured: Boolean(data.featured),
     createdAt: toDate(data.createdAt),
     updatedAt: toDate(data.updatedAt)
   }
@@ -36,6 +38,32 @@ const normalizeLink = (docSnapshot) => {
 
 const sortLinksByNewest = (links) =>
   links.sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime())
+
+/**
+ * Get all published resources for the public homepage.
+ * Backwards-compatible alias kept for existing callers.
+ * @returns {Promise<Array>} Array of published links
+ */
+export const getPublicResources = async () => {
+  try {
+    if (!isInitialized || !db) {
+      throw new Error('Firebase is not initialized.')
+    }
+
+    const q = query(
+      collection(db, LINKS_COLLECTION),
+      where('isPublished', '==', true)
+    )
+    const querySnapshot = await getDocs(q)
+    const links = querySnapshot.docs.map(normalizeLink)
+    return sortLinksByNewest(links)
+  } catch (error) {
+    console.error('Error fetching published resources:', error)
+    return []
+  }
+}
+
+export const getAdminLinks = getPublicResources
 
 /**
  * Add a new link to Firestore
@@ -58,9 +86,11 @@ export const addLink = async (userId, linkData) => {
       title: linkData.title || '',
       description: linkData.description || '',
       url: linkData.url || '',
+      reelUrl: linkData.reelUrl || '',
+      featured: Boolean(linkData.featured),
       category: linkData.category || 'general',
       month: linkData.month || new Date().toISOString().substring(0, 7),
-      isPublished: linkData.isPublished || false,
+      isPublished: Boolean(linkData.isPublished),
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     })
@@ -89,7 +119,7 @@ export const updateLink = async (linkId, updates) => {
     }
 
     const linkRef = doc(db, LINKS_COLLECTION, linkId)
-    
+
     await updateDoc(linkRef, {
       ...updates,
       updatedAt: serverTimestamp()
@@ -166,16 +196,19 @@ export const getLink = async (linkId) => {
     }
 
     const docSnap = await getDoc(doc(db, LINKS_COLLECTION, linkId))
-    
+
     if (docSnap.exists()) {
+      const data = docSnap.data()
       return {
         id: docSnap.id,
-        ...docSnap.data(),
-        createdAt: docSnap.data().createdAt?.toDate?.() || new Date(),
-        updatedAt: docSnap.data().updatedAt?.toDate?.() || new Date()
+        ...data,
+        reelUrl: data.reelUrl || '',
+        featured: Boolean(data.featured),
+        createdAt: data.createdAt?.toDate?.() || new Date(),
+        updatedAt: data.updatedAt?.toDate?.() || new Date()
       }
     }
-    
+
     return null
   } catch (error) {
     console.error('Error fetching link:', error)
@@ -289,7 +322,7 @@ export const deleteLinks = async (linkIds) => {
       throw new Error('Link IDs array is required.')
     }
 
-    await Promise.all(linkIds.map(id => deleteLink(id)))
+    await Promise.all(linkIds.map((id) => deleteLink(id)))
   } catch (error) {
     console.error('Error deleting links:', error)
     throw new Error(error.message || 'Failed to delete links. Please try again.')
@@ -305,5 +338,7 @@ export default {
   subscribeToLinks,
   getLinksByCategory,
   getPublishedLinks,
-  deleteLinks
+  deleteLinks,
+  getAdminLinks,
+  getPublicResources
 }

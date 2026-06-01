@@ -3,6 +3,7 @@ import { FaPlus, FaSpinner } from 'react-icons/fa'
 import { addLink } from '../services/linkService'
 import { useAuth } from '../hooks/useCustomHooks'
 import { showToast } from './Toast'
+import { isValidInstagramReelUrl } from '../utils/helpers'
 import './AddLinkForm.css'
 
 function AddLinkForm({ onLinkAdded }) {
@@ -10,9 +11,11 @@ function AddLinkForm({ onLinkAdded }) {
     title: '',
     description: '',
     url: '',
+    reelUrl: '',
     category: 'general',
     month: new Date().toISOString().substring(0, 7),
-    isPublished: false
+    featured: false,
+    isPublished: true
   })
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
@@ -35,6 +38,11 @@ function AddLinkForm({ onLinkAdded }) {
     }
   }
 
+  const isValidOptionalReelUrl = (reelUrl) => {
+    if (!reelUrl.trim()) return true
+    return isValidInstagramReelUrl(reelUrl)
+  }
+
   // Validate form
   const validateForm = () => {
     const newErrors = {}
@@ -47,6 +55,10 @@ function AddLinkForm({ onLinkAdded }) {
       newErrors.url = 'URL is required'
     } else if (!isValidUrl(formData.url)) {
       newErrors.url = 'Please enter a valid URL (e.g., https://example.com)'
+    }
+
+    if (!isValidOptionalReelUrl(formData.reelUrl)) {
+      newErrors.reelUrl = 'Please enter a valid Instagram Reel URL'
     }
 
     if (!formData.description.trim()) {
@@ -93,9 +105,11 @@ function AddLinkForm({ onLinkAdded }) {
         title: '',
         description: '',
         url: '',
+        reelUrl: '',
         category: 'general',
         month: new Date().toISOString().substring(0, 7),
-        isPublished: false
+        featured: false,
+        isPublished: true
       })
       setErrors({})
 
@@ -147,6 +161,21 @@ function AddLinkForm({ onLinkAdded }) {
             disabled={loading}
           />
           {errors.url && <span className="error-message">{errors.url}</span>}
+        </div>
+
+        {/* Instagram Reel URL */}
+        <div className="form-group">
+          <label htmlFor="reelUrl">Instagram Reel URL (optional)</label>
+          <input
+            type="url"
+            id="reelUrl"
+            name="reelUrl"
+            value={formData.reelUrl}
+            onChange={handleChange}
+            placeholder="https://www.instagram.com/reel/..."
+            disabled={loading}
+          />
+          {errors.reelUrl && <span className="error-message">{errors.reelUrl}</span>}
         </div>
 
         {/* Description */}
@@ -216,6 +245,18 @@ function AddLinkForm({ onLinkAdded }) {
             disabled={loading}
           />
           <label htmlFor="isPublished">Publish immediately</label>
+        </div>
+
+        <div className="form-group form-checkbox">
+          <input
+            type="checkbox"
+            id="featured"
+            name="featured"
+            checked={formData.featured}
+            onChange={handleChange}
+            disabled={loading}
+          />
+          <label htmlFor="featured">Mark as featured</label>
         </div>
 
         {/* Submit Button */}

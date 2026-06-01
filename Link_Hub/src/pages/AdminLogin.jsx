@@ -135,20 +135,6 @@ function AdminLogin() {
           </button>
         </form>
 
-        <div className="login-footer">
-          <p>Use your Firebase credentials to access the admin panel</p>
-        </div>
-      </div>
-
-      <div className="security-info glass">
-        <h3>🔒 Security Features</h3>
-        <ul>
-          <li>Firebase Authentication with email/password</li>
-          <li>Secure password encryption</li>
-          <li>Automatic session persistence</li>
-          <li>Protected admin routes</li>
-          <li>Real-time error handling</li>
-        </ul>
       </div>
     </div>
   )

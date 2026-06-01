@@ -1,0 +1,29 @@
+.text-type {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  white-space: pre-wrap;
+}
+
+.text-type__content {
+  display: inline-block;
+}
+
+.text-type__cursor {
+  display: inline-block;
+  opacity: 1;
+  animation-name: textTypeBlink;
+  animation-timing-function: step-end;
+  animation-iteration-count: infinite;
+}
+
+@keyframes textTypeBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}

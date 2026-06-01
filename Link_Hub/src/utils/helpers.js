@@ -89,6 +89,23 @@ export const isValidUrl = (url) => {
   }
 }
 
+// Check if URL is a valid Instagram Reel link
+export const isValidInstagramReelUrl = (url) => {
+  if (!url) return false
+
+  try {
+    const parsedUrl = new URL(url)
+    const hostname = parsedUrl.hostname.toLowerCase().replace(/^www\./, '')
+    const pathname = parsedUrl.pathname.toLowerCase()
+
+    return (
+      hostname === 'instagram.com' || hostname.endsWith('.instagram.com') || hostname === 'instagr.am'
+    ) && (pathname.includes('/reel/') || pathname.includes('/reels/'))
+  } catch (error) {
+    return false
+  }
+}
+
 // Get domain from URL
 export const getDomainFromUrl = (url) => {
   try {

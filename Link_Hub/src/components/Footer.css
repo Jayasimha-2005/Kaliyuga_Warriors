@@ -32,6 +32,25 @@
   margin-bottom: 0.5rem;
   color: var(--accent);
 }
+/* Brand overrides */
+.footer-section.brand .brand-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.footer-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: transparent;
+}
+
+.footer-section.brand .brand-name {
+  color: #000; /* keep brand name black as requested */
+  font-weight: 800;
+}
 .footer-section h4 {
   font-size: 1.05rem;
   margin-bottom: 0.6rem;

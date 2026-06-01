@@ -70,43 +70,32 @@ const ResourceCard = ({ resource, index }) => {
         <div className="resource-details">
           <h3 className="resource-title">{resource.title || resource.url}</h3>
           {resource.description && <p className="resource-description">{resource.description}</p>}
-
-          <a
-            href={resource.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="resource-button"
-          >
-            Open Resource
-            <FaExternalLinkAlt />
-          </a>
         </div>
       </div>
 
-      {hasReel && (
-        <aside className="reel-section">
-          <div className="reel-heading">
-            <div className="reel-icon-wrap">
-              <FaInstagram className="reel-icon" />
-            </div>
-            <div>
-              <p className="reel-title">Instagram Reel</p>
-              <span className="reel-label">Reel Available</span>
-            </div>
-          </div>
+      <aside className="resource-rail">
+        <a
+          href={resource.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="resource-button"
+        >
+          Open Resource
+          <FaExternalLinkAlt />
+        </a>
 
-          <p className="reel-description">Watch the associated reel for a quick visual preview.</p>
-
+        {hasReel && (
           <a
             href={resource.reelUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="reel-button"
+            className="reel-button reel-button-inline"
           >
+            <FaInstagram />
             Watch Reel
           </a>
-        </aside>
-      )}
+        )}
+      </aside>
     </motion.article>
   )
 }
@@ -123,13 +112,12 @@ const SkeletonCard = () => (
         <span className="skeleton skeleton-title" />
         <span className="skeleton skeleton-line" />
         <span className="skeleton skeleton-line short" />
-        <span className="skeleton skeleton-button" />
       </div>
     </div>
-    <div className="reel-section skeleton-reel">
-      <span className="skeleton skeleton-line" />
+    <div className="resource-rail skeleton-rail" aria-hidden="true">
       <span className="skeleton skeleton-line short" />
       <span className="skeleton skeleton-button" />
+      <span className="skeleton skeleton-button reel-skeleton-button" />
     </div>
   </div>
 )
@@ -147,8 +135,15 @@ function Home() {
       try {
         const publicResources = await getPublicResources()
 
+        // exclude specific resources from public listing (case-insensitive match)
+        const EXCLUDE_TITLES = ['java dsa course']
+        const visibleResources = publicResources.filter((r) => {
+          const title = (r.title || '').toString().trim().toLowerCase()
+          return !EXCLUDE_TITLES.includes(title)
+        })
+
         if (isMounted) {
-          setResources(publicResources)
+          setResources(visibleResources)
         }
       } catch (error) {
         console.error('Error loading public resources:', error)
@@ -256,7 +251,7 @@ function Home() {
           <span className="hero-kicker">Skills Are Weapons</span>
               <h1>
                 <TextType
-                  text="Welcome to Kaliyuga Warriors"
+                  text="Welcome to Kaliyugawarriors"
                   typingSpeed={75}
                   pauseDuration={1500}
                   showCursor

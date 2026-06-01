@@ -13,9 +13,9 @@ function AddLinkForm({ onLinkAdded }) {
     url: '',
     reelUrl: '',
     category: 'general',
-    month: new Date().toISOString().substring(0, 7),
+    month: new Date().toISOString().substring(0, 10),
     featured: false,
-    isPublished: true
+    isPublished: false
   })
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
@@ -97,7 +97,11 @@ function AddLinkForm({ onLinkAdded }) {
     setLoading(true)
 
     try {
-      await addLink(user.uid, formData)
+      const linkData = {
+        ...formData,
+        month: formData.month ? formData.month.substring(0, 7) : ''
+      }
+      await addLink(user.uid, linkData)
       showToast('✅ Link added successfully!', 'success')
 
       // Reset form
@@ -107,9 +111,9 @@ function AddLinkForm({ onLinkAdded }) {
         url: '',
         reelUrl: '',
         category: 'general',
-        month: new Date().toISOString().substring(0, 7),
+        month: new Date().toISOString().substring(0, 10),
         featured: false,
-        isPublished: true
+        isPublished: false
       })
       setErrors({})
 
@@ -215,22 +219,15 @@ function AddLinkForm({ onLinkAdded }) {
           {/* Month */}
           <div className="form-group">
             <label htmlFor="month">Month</label>
-            <select
+            <input
+              type="date"
               id="month"
               name="month"
               value={formData.month}
               onChange={handleChange}
               disabled={loading}
-            >
-              {months.map(month => (
-                <option key={month} value={month}>
-                  {new Date(month + '-01').toLocaleDateString('en-US', {
-                    month: 'long',
-                    year: 'numeric'
-                  })}
-                </option>
-              ))}
-            </select>
+              required
+            />
           </div>
         </div>
 

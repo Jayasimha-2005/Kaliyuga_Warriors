@@ -55,10 +55,39 @@ function AdminDashboard() {
     <div className="admin-dashboard fade-in">
       <ToastContainer />
 
+      {/* Mobile Header Bar */}
+      <header className="mobile-header">
+        <div className="mobile-brand">Kaliyugawarriors</div>
+        <button
+          className={`mobile-menu-toggle ${sidebarOpen ? 'open' : ''}`}
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          aria-label="Toggle menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </header>
+
+      {/* Sidebar Backdrop for Mobile */}
+      {sidebarOpen && (
+        <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
+      )}
+
       {/* Sidebar */}
       <aside className={`sidebar glass ${sidebarOpen ? 'open' : ''} ${sidebarCollapsed ? 'collapsed' : 'expanded'}`}>
         <div className="sidebar-content">
           <div className="sidebar-header">
+            <div className="sidebar-brand">Kaliyugawarriors</div>
+            <button
+              type="button"
+              className="sidebar-close-btn"
+              onClick={() => setSidebarOpen(false)}
+              aria-label="Close sidebar"
+            >
+              <FaTimes />
+            </button>
+
             <button
               type="button"
               className="sidebar-collapse-toggle"
@@ -73,7 +102,7 @@ function AdminDashboard() {
           <nav className="sidebar-nav">
             <div className="nav-group">
               <div className="nav-group-title">ADMIN MENU</div>
-              
+
               <button
                 className={`nav-link ${activeTab === 'overview' ? 'active' : ''}`}
                 onClick={() => {
@@ -110,7 +139,7 @@ function AdminDashboard() {
 
             <div className="nav-group">
               <div className="nav-group-title">ACCOUNT</div>
-              
+
               <div className="user-info">
                 <div className="user-avatar">
                   {user?.email?.charAt(0).toUpperCase()}
@@ -140,8 +169,8 @@ function AdminDashboard() {
           {activeTab === 'overview' && (
             <div className="dashboard-content">
               <div className="dashboard-header">
-                <h1>Welcome back!</h1>
-                <p>Manage your links efficiently</p>
+                <h1>Welcome Warrior!</h1>
+                <p>Skills are Weapons</p>
               </div>
 
               <div className="stats-grid">
@@ -197,8 +226,8 @@ function AdminDashboard() {
           {activeTab === 'add' && (
             <div className="dashboard-content">
               <div className="dashboard-header">
-                <h1>Add New Link</h1>
-                <p>Create a new link entry</p>
+                <h1>Forge New Weapon</h1>
+                <p>Craft and prepare a new high-impact skill resource</p>
               </div>
               <AddLinkForm
                 onLinkAdded={() => {
@@ -212,14 +241,14 @@ function AdminDashboard() {
           {activeTab === 'manage' && (
             <div className="dashboard-content">
               <div className="dashboard-header">
-                <h1>Manage Links</h1>
-                <p>View, edit, and manage all your links</p>
+                <h1>Warrior's Arsenal</h1>
+                <p>Equip the battlefield with high-impact weapons and resource links</p>
               </div>
               <LinksTable
                 links={links}
                 loading={linksLoading}
                 onEdit={handleEdit}
-                onRefresh={() => {}} // Real-time subscription handles refresh
+                onRefresh={() => { }} // Real-time subscription handles refresh
               />
             </div>
           )}
@@ -234,16 +263,9 @@ function AdminDashboard() {
             setShowEditModal(false)
             setEditingLink(null)
           }}
-          onLinkUpdated={() => {}}
+          onLinkUpdated={() => { }}
         />
       )}
-
-      {/* Mobile Menu Toggle */}
-      <button className="mobile-menu-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Toggle menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
     </div>
   )
 }

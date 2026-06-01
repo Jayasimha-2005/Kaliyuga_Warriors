@@ -1,128 +1,131 @@
 .footer {
   margin: 0;
-  margin-top: auto;
+  margin-top: 4rem; /* Tight, elegant top margin */
   border-radius: 0;
-  background-color: #fff6ee; /* warm light orange to match theme */
-  border-top: 1px solid rgba(255,138,14,0.06);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 122, 0, 0.08);
+  color: #0f172a;
+  position: relative;
+  z-index: 5;
 }
 
 .footer-container {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem 1.25rem;
+  padding: 2rem 1.5rem 1.5rem;
 }
 
 .footer-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
-.footer-section h3 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-  color: #64b5f6;
-}
-
-.footer-section h3 {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-  color: var(--accent);
-}
-
-/* Brand overrides */
 .footer-section.brand .brand-inner {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .footer-logo {
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: 12px;
   background: transparent;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.footer-section h3 {
+  margin: 0 0 0.15rem;
 }
 
 .footer-section.brand .brand-name {
-  color: #000; /* keep brand name black as requested */
+  font-family: 'Orbitron', sans-serif;
+  color: #0f172a;
   font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
 }
-.footer-section h4 {
-  font-size: 1.05rem;
-  margin-bottom: 0.6rem;
-  color: rgba(15,23,42,0.7);
-}
+
 .footer-section p {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--muted);
+  margin: 0;
+  font-size: 0.88rem;
+  color: #64748b;
+  font-weight: 500;
 }
 
-.footer-section ul li {
+.footer-section h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-transform: uppercase;
   margin-bottom: 0.5rem;
-}
-
-.footer-section ul li a {
-  color: rgba(15,23,42,0.8);
-  transition: all 0.2s ease;
-  padding: 0.25rem 0;
-}
-
-.footer-section ul li a:hover {
-  color: var(--accent);
-  padding-left: 0.5rem;
+  color: #ff7a00;
+  letter-spacing: 0.1em;
+  text-align: right;
 }
 
 .social-links {
   display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: flex-end;
 }
 
 .social-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255,122,0,0.12);
-  color: var(--accent);
-  transition: all 0.18s ease;
-  font-size: 1.15rem;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ff7a00, #ffb86b);
+  color: white;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 1.05rem;
+  box-shadow: 0 4px 10px rgba(255, 122, 0, 0.25);
 }
 
 .social-icon:hover {
-  background: rgba(255,122,0,0.2);
-  transform: translateY(-4px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(255, 122, 0, 0.35);
   color: white;
 }
 
 .footer-bottom {
-  border-top: 1px solid rgba(255,138,14,0.04);
+  border-top: 1px solid rgba(255, 122, 0, 0.05);
   padding-top: 1rem;
   text-align: center;
-  color: rgba(15,23,42,0.6);
-  font-size: 0.95rem;
+  color: #94a3b8;
+  font-size: 0.88rem;
+  font-weight: 500;
 }
 
 @media (max-width: 768px) {
   .footer-container {
-    padding: 1.5rem;
+    padding: 1.5rem 1rem 1rem;
   }
 
   .footer-content {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
   }
 
-  .footer-section {
+  .footer-section.brand .brand-inner {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .footer-section h4 {
     text-align: center;
+    margin-bottom: 0.5rem;
   }
 
   .social-links {

@@ -59,7 +59,7 @@ function Footer() {
 
               <div>
                 <h3><span className="brand-name">Kaliyugawarriors</span></h3>
-                <p>Manage and share your links effortlessly</p>
+                <p>Skills Are Weapons</p>
               </div>
             </div>
           </div>

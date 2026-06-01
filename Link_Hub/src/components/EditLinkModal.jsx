@@ -110,7 +110,11 @@ function EditLinkModal({ link, onClose, onLinkUpdated }) {
     setLoading(true)
 
     try {
-      await updateLink(link.id, formData)
+      const linkData = {
+        ...formData,
+        month: formData.month ? formData.month.substring(0, 7) : ''
+      }
+      await updateLink(link.id, linkData)
       showToast('✅ Link updated successfully!', 'success')
       if (onLinkUpdated) {
         onLinkUpdated()
@@ -218,22 +222,15 @@ function EditLinkModal({ link, onClose, onLinkUpdated }) {
 
             <div className="form-group">
               <label htmlFor="month">Month</label>
-              <select
+              <input
+                type="date"
                 id="month"
                 name="month"
                 value={formData.month}
                 onChange={handleChange}
                 disabled={loading}
-              >
-                {months.map(month => (
-                  <option key={month} value={month}>
-                    {new Date(month + '-01').toLocaleDateString('en-US', {
-                      month: 'long',
-                      year: 'numeric'
-                    })}
-                  </option>
-                ))}
-              </select>
+                required
+              />
             </div>
           </div>
 

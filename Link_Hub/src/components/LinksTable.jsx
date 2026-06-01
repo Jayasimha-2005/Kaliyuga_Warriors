@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { FaEdit, FaTrash, FaToggleOn, FaToggleOff, FaSearch, FaSpinner } from 'react-icons/fa'
+import { FaEdit, FaTrash, FaToggleOn, FaToggleOff, FaSearch, FaSpinner, FaStar } from 'react-icons/fa'
 import { deleteLink, updateLink } from '../services/linkService'
 import { showToast } from './Toast'
 import './LinksTable.css'
 
 function LinksTable({ links, loading, onEdit, onRefresh }) {
   const [searchTerm, setSearchTerm] = useState('')
-  const [sortMonth, setSortMonth] = useState('')
+  const [sortMonth, setSortMonth] = useState(() => new Date().toISOString().substring(0, 7))
   const [filteredLinks, setFilteredLinks] = useState([])
   const [deletingId, setDeletingId] = useState(null)
   const [togglingId, setTogglingId] = useState(null)
+  const [featuringId, setFeaturingId] = useState(null)
   const [deleteCandidate, setDeleteCandidate] = useState(null)
 
   // Filter and sort links
@@ -94,6 +95,29 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
     }
   }
 
+  // Handle featured toggle
+  const handleToggleFeatured = async (link) => {
+    setFeaturingId(link.id)
+
+    try {
+      await updateLink(link.id, {
+        featured: !link.featured
+      })
+      showToast(
+        link.featured ? '⭐ Link removed from featured' : '⭐ Link marked as featured!',
+        'success'
+      )
+      if (onRefresh) {
+        onRefresh()
+      }
+    } catch (error) {
+      console.error('Error toggling featured:', error)
+      showToast(error.message || 'Failed to update link', 'error')
+    } finally {
+      setFeaturingId(null)
+    }
+  }
+
   // Get unique months for filter
   const months = [...new Set(links.map(link => link.month))].sort().reverse()
 
@@ -157,7 +181,7 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
             <thead>
               <tr>
                 <th>Title</th>
-                <th>Description</th>
+                <th className="description-cell">Description</th>
                 <th>Category</th>
                 <th>Month</th>
                 <th>Status</th>
@@ -205,6 +229,18 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
                         <FaSpinner className="spinner" />
                       ) : (
                         link.isPublished ? <FaToggleOn /> : <FaToggleOff />
+                      )}
+                    </button>
+                    <button
+                      className={`action-btn feature-btn ${link.featured ? 'featured' : ''}`}
+                      onClick={() => handleToggleFeatured(link)}
+                      disabled={featuringId === link.id}
+                      title={link.featured ? 'Remove featured' : 'Mark as featured'}
+                    >
+                      {featuringId === link.id ? (
+                        <FaSpinner className="spinner" />
+                      ) : (
+                        <FaStar />
                       )}
                     </button>
                     <button

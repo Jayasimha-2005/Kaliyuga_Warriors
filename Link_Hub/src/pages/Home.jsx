@@ -127,6 +127,7 @@ function Home() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
+  const [activeTab, setActiveTab] = useState('')
 
  useEffect(() => {
   const unsubscribe = subscribeToPublicResources((publicResources) => {
@@ -217,6 +218,28 @@ function Home() {
   }, [filteredResources])
 
   const filtersActive = Boolean(searchTerm.trim()) || categoryFilter !== 'all'
+
+  const availableTabs = useMemo(() => {
+    const tabs = []
+    if (featuredResources.length > 0) {
+      tabs.push({ id: 'featured', label: '⭐ Featured', count: featuredResources.length })
+    }
+    groupedResources.forEach(([monthKey, monthResources]) => {
+      tabs.push({ id: monthKey, label: formatMonthLabel(monthKey), count: monthResources.length })
+    })
+    return tabs
+  }, [featuredResources, groupedResources])
+
+  useEffect(() => {
+    if (availableTabs.length > 0) {
+      const isValid = availableTabs.some(tab => tab.id === activeTab)
+      if (!isValid) {
+        setActiveTab(availableTabs[0].id)
+      }
+    } else {
+      setActiveTab('')
+    }
+  }, [availableTabs, activeTab])
 
   const clearFilters = () => {
     setSearchTerm('')
@@ -331,56 +354,85 @@ function Home() {
           </p>
         </motion.section>
       ) : (
-        <AnimatePresence mode="wait">
-          <motion.section
-            className="resources-shell"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {featuredResources.length > 0 && (
-              <motion.div
-                className="resource-group featured-group"
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35 }}
-              >
-                <div className="section-header">
-                  <div>
-                    <h2>
-                      <FaStar /> Featured Resources
-                    </h2>
-                    <p>Admin highlighted items appear first.</p>
+        <div className="dashboard-split-layout">
+          {/* Left Sidebar: Month & Featured Tabs */}
+          <aside className="dashboard-tabs-sidebar glass">
+            <div className="tabs-title">TIMELINE</div>
+            <div className="tabs-list">
+              {availableTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  className={`tab-item ${activeTab === tab.id ? 'active' : ''}`}
+                  onClick={() => setActiveTab(tab.id)}
+                >
+                  <span className="tab-label">{tab.label}</span>
+                  <span className="tab-badge">{tab.count}</span>
+                </button>
+              ))}
+            </div>
+          </aside>
+
+          {/* Right Main Panel: Selected Month's Links */}
+          <main className="dashboard-links-panel">
+            <AnimatePresence mode="wait">
+              {activeTab === 'featured' && (
+                <motion.div
+                  key="featured"
+                  className="resource-group featured-group"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.28 }}
+                >
+                  <div className="section-header">
+                    <div>
+                      <h2>⭐ Featured Resources</h2>
+                      <p>Admin highlighted resources for maximum impact.</p>
+                    </div>
+                    <span className="section-count">{featuredResources.length} items</span>
                   </div>
-                  <span className="section-count">{featuredResources.length} items</span>
-                </div>
+                  <div className="resource-grid">
+                    {featuredResources.map((resource, index) => (
+                      <ResourceCard key={resource.id} resource={resource} index={index} />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
 
-                <div className="resource-grid">
-                  {featuredResources.map((resource, index) => (
-                    <ResourceCard key={resource.id} resource={resource} index={index} />
-                  ))}
-                </div>
-              </motion.div>
-            )}
+              {availableTabs.filter(tab => tab.id !== 'featured').map((tab) => {
+                if (activeTab !== tab.id) return null;
+                const monthData = groupedResources.find(([monthKey]) => monthKey === tab.id);
+                if (!monthData) return null;
+                const [monthKey, monthResources] = monthData;
 
-            {groupedResources.map(([monthKey, monthResources], monthIndex) => (
-              <motion.div
-                className="resource-group"
-                key={monthKey}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, delay: monthIndex * 0.04 }}
-              >
-                <div className="resource-grid">
-                  {monthResources.map((resource, index) => (
-                    <ResourceCard key={resource.id} resource={resource} index={index} />
-                  ))}
-                </div>
-              </motion.div>
-            ))}
-          </motion.section>
-        </AnimatePresence>
+                return (
+                  <motion.div
+                    key={monthKey}
+                    className="resource-group"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.28 }}
+                  >
+                    <div className="section-header">
+                      <div>
+                        <h2>📅 {tab.label}</h2>
+                        <p>Resources published during {tab.label}.</p>
+                      </div>
+                      <span className="section-count">{monthResources.length} items</span>
+                    </div>
+                    <div className="resource-grid">
+                      {monthResources.map((resource, index) => (
+                        <ResourceCard key={resource.id} resource={resource} index={index} />
+                      ))}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </main>
+        </div>
       )}
     </div>
   )

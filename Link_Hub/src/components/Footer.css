@@ -32,6 +32,7 @@
   margin-bottom: 0.5rem;
   color: var(--accent);
 }
+
 /* Brand overrides */
 .footer-section.brand .brand-inner {
   display: flex;

@@ -9,7 +9,7 @@ import './App.css'
 
 function AppLayout() {
   const location = useLocation()
-  const hideFooter = location.pathname === '/admin/dashboard'
+  const hideFooter = location.pathname.startsWith('/admin')
 
   return (
     <div className="app-container">

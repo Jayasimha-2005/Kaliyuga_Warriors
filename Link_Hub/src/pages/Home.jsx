@@ -11,7 +11,7 @@ import {
   FaTimes
 } from 'react-icons/fa'
 import TextType from '../components/TextType'
-import { getPublicResources } from '../services/linkService'
+import { subscribeToPublicResources } from '../services/linkService'
 import './Home.css'
 
 const formatMonthLabel = (monthValue) => {
@@ -128,38 +128,22 @@ function Home() {
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
 
-  useEffect(() => {
-    let isMounted = true
+ useEffect(() => {
+  const unsubscribe = subscribeToPublicResources((publicResources) => {
+    const EXCLUDE_TITLES = ['java dsa course']
+    const visibleResources = publicResources.filter((r) => {
+      const title = (r.title || '').toString().trim().toLowerCase()
+      return !EXCLUDE_TITLES.includes(title)
+    })
 
-    const loadResources = async () => {
-      try {
-        const publicResources = await getPublicResources()
+    setResources(visibleResources)
+    setLoading(false)
+  })
 
-        // exclude specific resources from public listing (case-insensitive match)
-        const EXCLUDE_TITLES = ['java dsa course']
-        const visibleResources = publicResources.filter((r) => {
-          const title = (r.title || '').toString().trim().toLowerCase()
-          return !EXCLUDE_TITLES.includes(title)
-        })
-
-        if (isMounted) {
-          setResources(visibleResources)
-        }
-      } catch (error) {
-        console.error('Error loading public resources:', error)
-      } finally {
-        if (isMounted) {
-          setLoading(false)
-        }
-      }
-    }
-
-    loadResources()
-
-    return () => {
-      isMounted = false
-    }
-  }, [])
+  return () => {
+    unsubscribe?.()
+  }
+}, [])
 
   const stats = useMemo(() => {
     const categories = new Set()

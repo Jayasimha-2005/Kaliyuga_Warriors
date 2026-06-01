@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FaEnvelope, FaLock, FaSpinner, FaExclamationCircle, FaCheckCircle } from 'react-icons/fa'
+import { FaSpinner, FaExclamationCircle, FaCheckCircle } from 'react-icons/fa'
 import { useAuth } from '../hooks/useCustomHooks'
 import './AdminLogin.css'
 
@@ -90,7 +90,6 @@ function AdminLogin() {
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
             <div className="input-wrapper">
-              <FaEnvelope className="input-icon" />
               <input
                 type="email"
                 id="email"
@@ -106,7 +105,6 @@ function AdminLogin() {
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <div className="input-wrapper">
-              <FaLock className="input-icon" />
               <input
                 type="password"
                 id="password"

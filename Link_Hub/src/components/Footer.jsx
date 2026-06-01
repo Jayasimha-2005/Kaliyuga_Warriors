@@ -64,12 +64,6 @@ function Footer() {
             </div>
           </div>
 
-          <div className="footer-section">
-            <h4>Quick Links</h4>
-            <ul>
-              <li><a href="/">Dashboard</a></li>
-            </ul>
-          </div>
 
           <div className="footer-section">
             <h4>Follow Us</h4>

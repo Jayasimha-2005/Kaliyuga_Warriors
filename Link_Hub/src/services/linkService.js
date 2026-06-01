@@ -62,7 +62,35 @@ export const getPublicResources = async () => {
     return []
   }
 }
+export const subscribeToPublicResources = (callback) => {
+  try {
+    if (!isInitialized || !db) {
+      console.warn('Firebase is not initialized. Cannot subscribe to public resources.')
+      return () => {}
+    }
 
+    const q = query(
+      collection(db, LINKS_COLLECTION),
+      where('isPublished', '==', true)
+    )
+
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const links = querySnapshot.docs.map(normalizeLink)
+        callback(sortLinksByNewest(links))
+      },
+      (error) => {
+        console.error('Error in public resources subscription:', error)
+      }
+    )
+
+    return unsubscribe
+  } catch (error) {
+    console.error('Error subscribing to public resources:', error)
+    return () => {}
+  }
+}
 export const getAdminLinks = getPublicResources
 
 /**
@@ -336,6 +364,7 @@ export default {
   getLinks,
   getLink,
   subscribeToLinks,
+  subscribeToPublicResources,
   getLinksByCategory,
   getPublishedLinks,
   deleteLinks,

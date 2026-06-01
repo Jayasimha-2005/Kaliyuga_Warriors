@@ -11,6 +11,7 @@
   color: #0f172a;
   position: relative;
   overflow: hidden;
+  overscroll-behavior-x: none;
 }
 
 .admin-dashboard::before {
@@ -254,10 +255,12 @@
 .dashboard-main {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1.15rem 1.25rem 1.15rem 1.35rem;
   position: relative;
   z-index: 1;
   height: 100%;
+  min-width: 0;
 }
 
 .dashboard-container {
@@ -265,12 +268,14 @@
   margin: 0;
   padding: 0;
   max-width: none;
+  min-width: 0;
 }
 
 .dashboard-content {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  min-width: 0;
 }
 
 .dashboard-content > * {

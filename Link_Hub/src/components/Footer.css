@@ -1,11 +1,11 @@
 .footer {
   margin: 0;
-  margin-top: 4rem; /* Tight, elegant top margin */
+  margin-top: 5rem;
   border-radius: 0;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255, 122, 0, 0.08);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-top: 1px solid rgba(255, 122, 0, 0.06);
   color: #0f172a;
   position: relative;
   z-index: 5;
@@ -15,120 +15,146 @@
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 1.5rem;
+  padding: 2.5rem 2rem 2rem;
 }
 
-.footer-content {
+.footer-top {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 2rem;
+}
+
+.footer-top .brand-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.footer-logo {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: transparent;
+  box-shadow: 0 8px 24px rgba(255, 122, 0, 0.06);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.footer-logo:hover {
+  transform: scale(1.05) rotate(2deg);
+}
+
+.brand-text h3 {
+  margin: 0 0 0.2rem;
+}
+
+.brand-text .brand-name {
+  font-family: 'Orbitron', sans-serif;
+  color: #0f172a;
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, #ff7a00, #ff9f1c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-text .brand-slogan {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #64748b;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 122, 0, 0.06);
+  padding-top: 1.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
-  margin-bottom: 1.5rem;
+  gap: 1.5rem;
 }
 
-.footer-section.brand .brand-inner {
+.copyright-text {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.footer-social-section {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
-.footer-logo {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-  border-radius: 12px;
-  background: transparent;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.footer-section h3 {
-  margin: 0 0 0.15rem;
-}
-
-.footer-section.brand .brand-name {
-  font-family: 'Orbitron', sans-serif;
-  color: #0f172a;
-  font-weight: 800;
-  font-size: 1.25rem;
-  letter-spacing: -0.01em;
-}
-
-.footer-section p {
-  margin: 0;
-  font-size: 0.88rem;
-  color: #64748b;
-  font-weight: 500;
-}
-
-.footer-section h4 {
+.social-label {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   font-weight: 800;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
   color: #ff7a00;
   letter-spacing: 0.1em;
-  text-align: right;
 }
 
 .social-links {
   display: flex;
   gap: 0.75rem;
-  justify-content: flex-end;
 }
 
 .social-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #ff7a00, #ffb86b);
-  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 122, 0, 0.05);
+  border: 1px solid rgba(255, 122, 0, 0.12);
+  color: #ff7a00;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 1.05rem;
-  box-shadow: 0 4px 10px rgba(255, 122, 0, 0.25);
+  font-size: 1.15rem;
+  cursor: pointer;
 }
 
 .social-icon:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(255, 122, 0, 0.35);
+  transform: translateY(-2px) scale(1.05);
+  background: linear-gradient(135deg, #ff7a00, #ffb86b);
+  border-color: transparent;
   color: white;
-}
-
-.footer-bottom {
-  border-top: 1px solid rgba(255, 122, 0, 0.05);
-  padding-top: 1rem;
-  text-align: center;
-  color: #94a3b8;
-  font-size: 0.88rem;
-  font-weight: 500;
+  box-shadow: 0 6px 20px rgba(255, 122, 0, 0.3);
 }
 
 @media (max-width: 768px) {
-  .footer-container {
-    padding: 1.5rem 1rem 1rem;
+  .footer {
+    margin-top: 2rem;
   }
 
-  .footer-content {
+  .footer-container {
+    padding: 1.5rem 1.25rem 1.25rem;
+  }
+
+  .footer-top {
+    justify-content: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-top .brand-inner {
     flex-direction: column;
     text-align: center;
-    gap: 1.25rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .footer-section.brand .brand-inner {
-    flex-direction: column;
     gap: 0.5rem;
   }
 
-  .footer-section h4 {
+  .footer-bottom {
+    flex-direction: column;
     text-align: center;
-    margin-bottom: 0.5rem;
+    gap: 0.75rem;
+    padding-top: 1rem;
   }
 
-  .social-links {
-    justify-content: center;
+  .footer-social-section {
+    flex-direction: column;
+    gap: 0.4rem;
   }
 }

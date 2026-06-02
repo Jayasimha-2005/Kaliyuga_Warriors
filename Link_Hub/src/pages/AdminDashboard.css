@@ -118,6 +118,10 @@
   padding: 0 0.85rem;
 }
 
+.sidebar-nav .nav-group:last-child {
+  margin-top: auto;
+}
+
 .nav-group-title {
   font-size: 0.7rem;
   font-weight: 800;
@@ -461,6 +465,14 @@
   display: none;
 }
 
+.brand-logo {
+  height: 32px;
+  width: 32px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: transparent;
+}
+
 /* Sidebar Backdrop */
 .sidebar-backdrop {
   position: fixed;
@@ -505,6 +517,9 @@
   }
 
   .mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
     font-family: 'Orbitron', sans-serif;
     font-weight: 800;
     font-size: 1.15rem;
@@ -565,40 +580,59 @@
 
   .sidebar.collapsed .nav-group-title,
   .sidebar.collapsed .nav-link span,
-  .sidebar.collapsed .user-details,
-  .sidebar.collapsed .user-info {
+  .sidebar.collapsed .user-details {
     display: block;
   }
 
+  .sidebar.collapsed .user-info {
+    display: flex !important;
+  }
+
   .sidebar.collapsed .nav-link {
-    width: auto;
+    width: 100%;
     height: auto;
     justify-content: flex-start;
     padding: 0.85rem 1rem;
   }
 
   .sidebar.collapsed .nav-link.logout {
-    width: auto;
+    width: 100%;
+  }
+
+  .sidebar.collapsed .nav-group {
+    align-items: stretch;
+    padding: 0 0.85rem;
+  }
+
+  .sidebar.collapsed .nav-group:last-child {
+    align-items: stretch;
   }
 
   .sidebar.collapsed .sidebar-header {
     justify-content: space-between;
-    padding: 1rem 1.5rem;
+    padding: 0.85rem 1rem;
   }
 
   .sidebar-header {
     justify-content: space-between !important;
-    padding: 1rem 1.5rem !important;
+    padding: 0.85rem 1rem !important;
     min-height: 4.5rem;
   }
 
   .sidebar-brand {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
     font-family: 'Orbitron', sans-serif;
     font-weight: 850;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     color: #ff7a00;
     letter-spacing: -0.01em;
+  }
+
+  .sidebar-brand .brand-logo {
+    height: 28px;
+    width: 28px;
   }
 
   .sidebar-close-btn {

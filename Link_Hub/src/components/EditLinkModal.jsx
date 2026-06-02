@@ -14,12 +14,13 @@ function EditLinkModal({ link, onClose, onLinkUpdated }) {
     category: 'general',
     month: '',
     featured: false,
-    isPublished: false
+    isDraft: true
   })
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
+  const [categoryOpen, setCategoryOpen] = useState(false)
 
-  const categories = ['general', 'tech', 'design', 'business', 'education', 'entertainment', 'other']
+  const categories = ['general', 'coding and tech', 'design', 'business', 'education', 'entertainment', 'hackathons', 'other']
   const currentYear = new Date().getFullYear()
   const months = Array.from({ length: 12 }, (_, i) => {
     const date = new Date(currentYear, i)
@@ -29,15 +30,34 @@ function EditLinkModal({ link, onClose, onLinkUpdated }) {
   // Initialize form with link data
   useEffect(() => {
     if (link) {
+      let initialMonth = ''
+      if (link.month) {
+        if (link.month.length === 10) {
+          // 1. New/Updated links: use the selected calendar date exactly as stored!
+          initialMonth = link.month
+        } else if (link.month.length === 7) {
+          // 2. Old/Remaining links: extract the exact day they were added from link.createdAt!
+          if (link.createdAt instanceof Date) {
+            initialMonth = link.createdAt.toLocaleDateString('sv-SE')
+          } else {
+            initialMonth = `${link.month}-01`
+          }
+        } else {
+          initialMonth = link.month
+        }
+      } else {
+        initialMonth = new Date().toLocaleDateString('sv-SE')
+      }
+
       setFormData({
         title: link.title || '',
         description: link.description || '',
         url: link.url || '',
         reelUrl: link.reelUrl || '',
         category: link.category || 'general',
-        month: link.month || new Date().toISOString().substring(0, 7),
+        month: initialMonth,
         featured: Boolean(link.featured),
-        isPublished: link.isPublished || false
+        isDraft: !link.isPublished
       })
     }
   }, [link])
@@ -112,8 +132,12 @@ function EditLinkModal({ link, onClose, onLinkUpdated }) {
     try {
       const linkData = {
         ...formData,
-        month: formData.month ? formData.month.substring(0, 7) : ''
+        isPublished: !formData.isDraft,
+        month: formData.month || ''
       }
+      delete linkData.isDraft
+      console.log('🚀 Saving updated link to Firestore with month/date string:', linkData.month)
+      showToast(`Sending to DB: "${linkData.month}"`, 'success')
       await updateLink(link.id, linkData)
       showToast('✅ Link updated successfully!', 'success')
       if (onLinkUpdated) {
@@ -205,19 +229,36 @@ function EditLinkModal({ link, onClose, onLinkUpdated }) {
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="category">Category</label>
-              <select
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                disabled={loading}
-              >
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>
-                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                  </option>
-                ))}
-              </select>
+              <div className="custom-select-container">
+                <button
+                  type="button"
+                  className={`custom-select-trigger ${categoryOpen ? 'active' : ''}`}
+                  onClick={() => setCategoryOpen(!categoryOpen)}
+                  disabled={loading}
+                >
+                  <span>{formData.category.charAt(0).toUpperCase() + formData.category.slice(1)}</span>
+                  <span className={`custom-select-arrow ${categoryOpen ? 'open' : ''}`}></span>
+                </button>
+                {categoryOpen && (
+                  <>
+                    <div className="custom-select-backdrop" onClick={() => setCategoryOpen(false)} />
+                    <ul className="custom-select-options">
+                      {categories.map(cat => (
+                        <li
+                          key={cat}
+                          className={`custom-select-option ${formData.category === cat ? 'selected' : ''}`}
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, category: cat }))
+                            setCategoryOpen(false)
+                          }}
+                        >
+                          {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </div>
             </div>
 
             <div className="form-group">
@@ -231,6 +272,9 @@ function EditLinkModal({ link, onClose, onLinkUpdated }) {
                 disabled={loading}
                 required
               />
+              <span className="debug-date-info" style={{ display: 'block', fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem', fontWeight: '500' }}>
+                Stored in DB: "{link.month}"
+              </span>
             </div>
           </div>
 
@@ -238,13 +282,13 @@ function EditLinkModal({ link, onClose, onLinkUpdated }) {
           <div className="form-group form-checkbox">
             <input
               type="checkbox"
-              id="isPublished"
-              name="isPublished"
-              checked={formData.isPublished}
+              id="isDraft"
+              name="isDraft"
+              checked={formData.isDraft}
               onChange={handleChange}
               disabled={loading}
             />
-            <label htmlFor="isPublished">Publish this link</label>
+            <label htmlFor="isDraft">Save as draft</label>
           </div>
 
           <div className="form-group form-checkbox">

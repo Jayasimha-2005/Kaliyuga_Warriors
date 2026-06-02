@@ -5,9 +5,7 @@ import {
   FaFilter,
   FaInstagram,
   FaLayerGroup,
-  FaRegCalendarAlt,
   FaSearch,
-  FaStar,
   FaTimes
 } from 'react-icons/fa'
 import TextType from '../components/TextType'
@@ -56,14 +54,14 @@ const ResourceCard = ({ resource, index }) => {
         <div className="resource-badges">
           {resource.featured && (
             <span className="resource-badge featured-badge">
-              <FaStar /> Featured
+              Featured
             </span>
           )}
           {resource.category && (
             <span className="resource-badge category-badge">{resource.category}</span>
           )}
           <span className="resource-badge date-badge">
-            <FaRegCalendarAlt /> {formatMonthLabel(resource.month)}
+            {formatMonthLabel(resource.month)}
           </span>
         </div>
 
@@ -128,6 +126,7 @@ function Home() {
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [activeTab, setActiveTab] = useState('')
+  const [filterDropdownOpen, setFilterDropdownOpen] = useState(false)
 
  useEffect(() => {
   const unsubscribe = subscribeToPublicResources((publicResources) => {
@@ -159,7 +158,7 @@ function Home() {
     return {
       totalResources: resources.length,
       totalCategories: categories.size,
-      currentMonthResources: resources.filter((resource) => resource.month === currentMonthKey).length
+      currentMonthResources: resources.filter((resource) => resource.month && resource.month.substring(0, 7) === currentMonthKey).length
     }
   }, [resources])
 
@@ -220,15 +219,17 @@ function Home() {
   const filtersActive = Boolean(searchTerm.trim()) || categoryFilter !== 'all'
 
   const availableTabs = useMemo(() => {
-    const tabs = []
+    const tabs = [
+      { id: 'all', label: 'All Months', count: filteredResources.length }
+    ]
     if (featuredResources.length > 0) {
-      tabs.push({ id: 'featured', label: '⭐ Featured', count: featuredResources.length })
+      tabs.push({ id: 'featured', label: 'Featured', count: featuredResources.length })
     }
     groupedResources.forEach(([monthKey, monthResources]) => {
       tabs.push({ id: monthKey, label: formatMonthLabel(monthKey), count: monthResources.length })
     })
     return tabs
-  }, [featuredResources, groupedResources])
+  }, [filteredResources, featuredResources, groupedResources])
 
   useEffect(() => {
     if (availableTabs.length > 0) {
@@ -305,17 +306,52 @@ function Home() {
             />
           </label>
 
-          <label className="filter-field">
+          <div className="filter-field-container">
             <span className="control-label">Category</span>
-            <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)}>
-              <option value="all">All categories</option>
-              {availableCategories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </label>
+            <div className="custom-filter-dropdown">
+              <button
+                type="button"
+                className={`filter-dropdown-trigger ${filterDropdownOpen ? 'active' : ''}`}
+                onClick={() => setFilterDropdownOpen(!filterDropdownOpen)}
+              >
+                <span>
+                  {categoryFilter === 'all'
+                    ? 'All categories'
+                    : categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)}
+                </span>
+                <span className={`filter-dropdown-arrow ${filterDropdownOpen ? 'open' : ''}`}></span>
+              </button>
+
+              {filterDropdownOpen && (
+                <>
+                  <div className="filter-dropdown-backdrop" onClick={() => setFilterDropdownOpen(false)} />
+                  <ul className="filter-dropdown-options">
+                    <li
+                      className={`filter-dropdown-option ${categoryFilter === 'all' ? 'selected' : ''}`}
+                      onClick={() => {
+                        setCategoryFilter('all')
+                        setFilterDropdownOpen(false)
+                      }}
+                    >
+                      All categories
+                    </li>
+                    {availableCategories.map((category) => (
+                      <li
+                        key={category}
+                        className={`filter-dropdown-option ${categoryFilter === category ? 'selected' : ''}`}
+                        onClick={() => {
+                          setCategoryFilter(category)
+                          setFilterDropdownOpen(false)
+                        }}
+                      >
+                        {category.charAt(0).toUpperCase() + category.slice(1)}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -376,6 +412,30 @@ function Home() {
           {/* Right Main Panel: Selected Month's Links */}
           <main className="dashboard-links-panel">
             <AnimatePresence mode="wait">
+              {activeTab === 'all' && (
+                <motion.div
+                  key="all"
+                  className="resource-group"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.28 }}
+                >
+                  <div className="section-header">
+                    <div>
+                      <h2>All Resources</h2>
+                      <p>All resource links published across all months.</p>
+                    </div>
+                    <span className="section-count">{filteredResources.length} items</span>
+                  </div>
+                  <div className="resource-grid">
+                    {filteredResources.map((resource, index) => (
+                      <ResourceCard key={resource.id} resource={resource} index={index} />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
               {activeTab === 'featured' && (
                 <motion.div
                   key="featured"
@@ -387,7 +447,7 @@ function Home() {
                 >
                   <div className="section-header">
                     <div>
-                      <h2>⭐ Featured Resources</h2>
+                      <h2>Featured Resources</h2>
                       <p>Admin highlighted resources for maximum impact.</p>
                     </div>
                     <span className="section-count">{featuredResources.length} items</span>
@@ -417,7 +477,7 @@ function Home() {
                   >
                     <div className="section-header">
                       <div>
-                        <h2>📅 {tab.label}</h2>
+                        <h2>{tab.label}</h2>
                         <p>Resources published during {tab.label}.</p>
                       </div>
                       <span className="section-count">{monthResources.length} items</span>

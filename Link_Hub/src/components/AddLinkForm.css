@@ -238,3 +238,113 @@
     font-size: 1.35rem;
   }
 }
+
+/* Custom Select Dropdown Styling */
+.custom-select-container {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: rgba(248, 250, 252, 0.7);
+  color: #0f172a;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+}
+
+.custom-select-trigger:hover:not(:disabled) {
+  border-color: rgba(255, 122, 0, 0.25);
+  background: rgba(248, 250, 252, 0.9);
+}
+
+.custom-select-trigger:focus:not(:disabled),
+.custom-select-trigger.active {
+  background: white;
+  border-color: #ff7a00;
+  box-shadow: 0 0 0 4px rgba(255, 122, 0, 0.12);
+}
+
+.custom-select-arrow {
+  width: 0.8rem;
+  height: 0.8rem;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff7a00' stroke-width='3'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.custom-select-arrow.open {
+  transform: rotate(180deg);
+}
+
+.custom-select-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+}
+
+.custom-select-options {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid rgba(255, 122, 0, 0.1);
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(255, 122, 0, 0.04);
+  padding: 0.4rem;
+  margin: 0;
+  list-style: none;
+  z-index: 999;
+  max-height: 250px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 122, 0, 0.2) transparent;
+  animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.custom-select-option {
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  color: #475569;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-weight: 500;
+}
+
+.custom-select-option:hover {
+  background: rgba(255, 122, 0, 0.06);
+  color: #ff7a00;
+}
+
+.custom-select-option.selected {
+  background: linear-gradient(135deg, #ff7a00, #ff9f1c);
+  color: white;
+  font-weight: 600;
+}
+

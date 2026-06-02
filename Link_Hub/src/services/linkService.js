@@ -117,7 +117,7 @@ export const addLink = async (userId, linkData) => {
       reelUrl: linkData.reelUrl || '',
       featured: Boolean(linkData.featured),
       category: linkData.category || 'general',
-      month: linkData.month || new Date().toISOString().substring(0, 7),
+      month: linkData.month || new Date().toISOString().substring(0, 10),
       isPublished: Boolean(linkData.isPublished),
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
@@ -357,6 +357,49 @@ export const deleteLinks = async (linkIds) => {
   }
 }
 
+/**
+ * Migrates all existing links in the collection to a new user ID.
+ * This ensures that if the admin account is recreated or changed,
+ * all existing links are seamlessly transferred to the new account.
+ * @param {string} newUserId - The new administrator's user ID
+ * @returns {Promise<number>} Number of migrated links
+ */
+export const migrateLinksToUser = async (newUserId) => {
+  try {
+    if (!isInitialized || !db) {
+      throw new Error('Firebase is not initialized.')
+    }
+    if (!newUserId) {
+      throw new Error('New User ID is required for migration.')
+    }
+
+    const linksCollectionRef = collection(db, LINKS_COLLECTION)
+    const querySnapshot = await getDocs(linksCollectionRef)
+    
+    let migrateCount = 0
+    const updatePromises = querySnapshot.docs.map(async (docSnap) => {
+      const data = docSnap.data()
+      if (data.userId !== newUserId) {
+        const docRef = doc(db, LINKS_COLLECTION, docSnap.id)
+        await updateDoc(docRef, {
+          userId: newUserId,
+          updatedAt: serverTimestamp()
+        })
+        migrateCount++
+      }
+    })
+
+    await Promise.all(updatePromises)
+    if (migrateCount > 0) {
+      console.log(`Successfully migrated ${migrateCount} links to new user ID: ${newUserId}`)
+    }
+    return migrateCount
+  } catch (error) {
+    console.error('Error migrating links to new user:', error)
+    return 0
+  }
+}
+
 export default {
   addLink,
   updateLink,
@@ -369,5 +412,6 @@ export default {
   getPublishedLinks,
   deleteLinks,
   getAdminLinks,
-  getPublicResources
+  getPublicResources,
+  migrateLinksToUser
 }

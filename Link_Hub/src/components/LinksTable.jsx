@@ -12,6 +12,7 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
   const [togglingId, setTogglingId] = useState(null)
   const [featuringId, setFeaturingId] = useState(null)
   const [deleteCandidate, setDeleteCandidate] = useState(null)
+  const [monthDropdownOpen, setMonthDropdownOpen] = useState(false)
 
   // Filter and sort links
   useEffect(() => {
@@ -28,7 +29,7 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
 
     // Month filter
     if (sortMonth) {
-      result = result.filter(link => link.month === sortMonth)
+      result = result.filter(link => link.month && link.month.substring(0, 7) === sortMonth)
     }
 
     // Sort by creation date (newest first)
@@ -119,7 +120,7 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
   }
 
   // Get unique months for filter
-  const months = [...new Set(links.map(link => link.month))].sort().reverse()
+  const months = [...new Set(links.map(link => link.month ? link.month.substring(0, 7) : ''))].filter(Boolean).sort().reverse()
 
   return (
     <div className="links-table-container glass">
@@ -140,21 +141,55 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
           />
         </div>
 
-        <select
-          className="month-filter"
-          value={sortMonth}
-          onChange={(e) => setSortMonth(e.target.value)}
-        >
-          <option value="">All Months</option>
-          {months.map(month => (
-            <option key={month} value={month}>
-              {new Date(month + '-01').toLocaleDateString('en-US', {
-                month: 'long',
-                year: 'numeric'
-              })}
-            </option>
-          ))}
-        </select>
+        <div className="custom-filter-dropdown">
+          <button
+            type="button"
+            className={`filter-dropdown-trigger ${monthDropdownOpen ? 'active' : ''}`}
+            onClick={() => setMonthDropdownOpen(!monthDropdownOpen)}
+          >
+            <span>
+              {sortMonth
+                ? new Date(sortMonth + '-01').toLocaleDateString('en-US', {
+                    month: 'long',
+                    year: 'numeric'
+                  })
+                : 'All Months'}
+            </span>
+            <span className={`filter-dropdown-arrow ${monthDropdownOpen ? 'open' : ''}`}></span>
+          </button>
+
+          {monthDropdownOpen && (
+            <>
+              <div className="filter-dropdown-backdrop" onClick={() => setMonthDropdownOpen(false)} />
+              <ul className="filter-dropdown-options">
+                <li
+                  className={`filter-dropdown-option ${sortMonth === '' ? 'selected' : ''}`}
+                  onClick={() => {
+                    setSortMonth('')
+                    setMonthDropdownOpen(false)
+                  }}
+                >
+                  All Months
+                </li>
+                {months.map(month => (
+                  <li
+                    key={month}
+                    className={`filter-dropdown-option ${sortMonth === month ? 'selected' : ''}`}
+                    onClick={() => {
+                      setSortMonth(month)
+                      setMonthDropdownOpen(false)
+                    }}
+                  >
+                    {new Date(month + '-01').toLocaleDateString('en-US', {
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Loading State */}
@@ -180,12 +215,12 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
           <table className="links-table">
             <thead>
               <tr>
-                <th>Title</th>
+                <th className="title-cell">Title</th>
                 <th className="description-cell">Description</th>
-                <th>Category</th>
-                <th>Month</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th className="category-cell">Category</th>
+                <th className="month-cell">Month</th>
+                <th className="status-cell">Status</th>
+                <th className="actions-cell">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -201,7 +236,7 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
                     <span className="category-badge">{link.category}</span>
                   </td>
                   <td className="month-cell">
-                    {new Date(link.month + '-01').toLocaleDateString('en-US', {
+                    {new Date((link.month ? link.month.substring(0, 7) : '') + '-01').toLocaleDateString('en-US', {
                       month: 'short',
                       year: 'numeric'
                     })}
@@ -212,49 +247,51 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
                     </span>
                   </td>
                   <td className="actions-cell">
-                    <button
-                      className="action-btn edit-btn"
-                      onClick={() => onEdit(link)}
-                      title="Edit link"
-                    >
-                      <FaEdit />
-                    </button>
-                    <button
-                      className="action-btn toggle-btn"
-                      onClick={() => handleTogglePublish(link)}
-                      disabled={togglingId === link.id}
-                      title={link.isPublished ? 'Unpublish' : 'Publish'}
-                    >
-                      {togglingId === link.id ? (
-                        <FaSpinner className="spinner" />
-                      ) : (
-                        link.isPublished ? <FaToggleOn /> : <FaToggleOff />
-                      )}
-                    </button>
-                    <button
-                      className={`action-btn feature-btn ${link.featured ? 'featured' : ''}`}
-                      onClick={() => handleToggleFeatured(link)}
-                      disabled={featuringId === link.id}
-                      title={link.featured ? 'Remove featured' : 'Mark as featured'}
-                    >
-                      {featuringId === link.id ? (
-                        <FaSpinner className="spinner" />
-                      ) : (
-                        <FaStar />
-                      )}
-                    </button>
-                    <button
-                      className="action-btn delete-btn"
-                      onClick={() => openDeleteDialog(link)}
-                      disabled={deletingId === link.id}
-                      title="Delete link"
-                    >
-                      {deletingId === link.id ? (
-                        <FaSpinner className="spinner" />
-                      ) : (
-                        <FaTrash />
-                      )}
-                    </button>
+                    <div className="actions-wrapper">
+                      <button
+                        className="action-btn edit-btn"
+                        onClick={() => onEdit(link)}
+                        title="Edit link"
+                      >
+                        <FaEdit />
+                      </button>
+                      <button
+                        className="action-btn toggle-btn"
+                        onClick={() => handleTogglePublish(link)}
+                        disabled={togglingId === link.id}
+                        title={link.isPublished ? 'Unpublish' : 'Publish'}
+                      >
+                        {togglingId === link.id ? (
+                          <FaSpinner className="spinner" />
+                        ) : (
+                          link.isPublished ? <FaToggleOn /> : <FaToggleOff />
+                        )}
+                      </button>
+                      <button
+                        className={`action-btn feature-btn ${link.featured ? 'featured' : ''}`}
+                        onClick={() => handleToggleFeatured(link)}
+                        disabled={featuringId === link.id}
+                        title={link.featured ? 'Remove featured' : 'Mark as featured'}
+                      >
+                        {featuringId === link.id ? (
+                          <FaSpinner className="spinner" />
+                        ) : (
+                          <FaStar />
+                        )}
+                      </button>
+                      <button
+                        className="action-btn delete-btn"
+                        onClick={() => openDeleteDialog(link)}
+                        disabled={deletingId === link.id}
+                        title="Delete link"
+                      >
+                        {deletingId === link.id ? (
+                          <FaSpinner className="spinner" />
+                        ) : (
+                          <FaTrash />
+                        )}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

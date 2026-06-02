@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FaSpinner, FaExclamationCircle, FaCheckCircle } from 'react-icons/fa'
+import { FaSpinner, FaExclamationCircle, FaCheckCircle, FaEye, FaEyeSlash } from 'react-icons/fa'
 import { useAuth } from '../hooks/useCustomHooks'
+import TextType from '../components/TextType'
 import './AdminLogin.css'
 
 function AdminLogin() {
@@ -9,6 +10,7 @@ function AdminLogin() {
   const [password, setPassword] = useState('')
   const [localError, setLocalError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
   const { login, isAuthenticating, error: authError, user, clearError } = useAuth()
 
@@ -57,8 +59,19 @@ function AdminLogin() {
   return (
     <div className="login-container fade-in">
       <div className="login-box glass">
-        <h1 className="login-title">Admin Login</h1>
-        <p className="login-subtitle">Secure access to Link Hub administration</p>
+        <div className="login-header">
+          <img src="/assets/KaliYuga_Warriors-logo.png" alt="Kaliyuga Warriors Logo" className="login-logo" />
+          <h1 className="login-title">
+            <TextType
+              text="Warrior Login"
+              typingSpeed={75}
+              loop={false}
+              showCursor={true}
+              cursorCharacter="_"
+            />
+          </h1>
+          <p className="login-subtitle">Secure access to Kaliyuga Warriors administration</p>
+        </div>
 
         {/* Error Message */}
         {displayError && (
@@ -93,7 +106,7 @@ function AdminLogin() {
               <input
                 type="email"
                 id="email"
-                placeholder="admin@example.com"
+                placeholder="admin@warrior.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isAuthenticating}
@@ -104,9 +117,9 @@ function AdminLogin() {
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <div className="input-wrapper">
+            <div className="input-wrapper password-wrapper">
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 id="password"
                 placeholder="••••••••"
                 value={password}
@@ -114,6 +127,15 @@ function AdminLogin() {
                 disabled={isAuthenticating}
                 required
               />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                tabIndex="-1"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
           </div>
 

@@ -15,13 +15,14 @@ function AddLinkForm({ onLinkAdded }) {
     category: 'general',
     month: new Date().toISOString().substring(0, 10),
     featured: false,
-    isPublished: false
+    isDraft: true
   })
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
+  const [categoryOpen, setCategoryOpen] = useState(false)
   const { user } = useAuth()
 
-  const categories = ['general', 'tech', 'design', 'business', 'education', 'entertainment', 'other']
+  const categories = ['general', 'coding and tech', 'design', 'business', 'education', 'entertainment', 'hackathons', 'other']
   const currentYear = new Date().getFullYear()
   const months = Array.from({ length: 12 }, (_, i) => {
     const date = new Date(currentYear, i)
@@ -99,8 +100,12 @@ function AddLinkForm({ onLinkAdded }) {
     try {
       const linkData = {
         ...formData,
-        month: formData.month ? formData.month.substring(0, 7) : ''
+        isPublished: !formData.isDraft,
+        month: formData.month || ''
       }
+      delete linkData.isDraft
+      console.log('🚀 Saving new link to Firestore with month/date string:', linkData.month)
+      showToast(`Adding to DB: "${linkData.month}"`, 'success')
       await addLink(user.uid, linkData)
       showToast('✅ Link added successfully!', 'success')
 
@@ -113,7 +118,7 @@ function AddLinkForm({ onLinkAdded }) {
         category: 'general',
         month: new Date().toISOString().substring(0, 10),
         featured: false,
-        isPublished: false
+        isDraft: true
       })
       setErrors({})
 
@@ -201,19 +206,36 @@ function AddLinkForm({ onLinkAdded }) {
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="category">Category</label>
-            <select
-              id="category"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              disabled={loading}
-            >
-              {categories.map(cat => (
-                <option key={cat} value={cat}>
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                </option>
-              ))}
-            </select>
+            <div className="custom-select-container">
+              <button
+                type="button"
+                className={`custom-select-trigger ${categoryOpen ? 'active' : ''}`}
+                onClick={() => setCategoryOpen(!categoryOpen)}
+                disabled={loading}
+              >
+                <span>{formData.category.charAt(0).toUpperCase() + formData.category.slice(1)}</span>
+                <span className={`custom-select-arrow ${categoryOpen ? 'open' : ''}`}></span>
+              </button>
+              {categoryOpen && (
+                <>
+                  <div className="custom-select-backdrop" onClick={() => setCategoryOpen(false)} />
+                  <ul className="custom-select-options">
+                    {categories.map(cat => (
+                      <li
+                        key={cat}
+                        className={`custom-select-option ${formData.category === cat ? 'selected' : ''}`}
+                        onClick={() => {
+                          setFormData(prev => ({ ...prev, category: cat }))
+                          setCategoryOpen(false)
+                        }}
+                      >
+                        {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Month */}
@@ -235,13 +257,13 @@ function AddLinkForm({ onLinkAdded }) {
         <div className="form-group form-checkbox">
           <input
             type="checkbox"
-            id="isPublished"
-            name="isPublished"
-            checked={formData.isPublished}
+            id="isDraft"
+            name="isDraft"
+            checked={formData.isDraft}
             onChange={handleChange}
             disabled={loading}
           />
-          <label htmlFor="isPublished">Publish immediately</label>
+          <label htmlFor="isDraft">Save as draft</label>
         </div>
 
         <div className="form-group form-checkbox">

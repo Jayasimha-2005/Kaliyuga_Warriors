@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FaPlus, FaLink, FaSignOutAlt, FaHome, FaSpinner, FaEllipsisV, FaTimes } from 'react-icons/fa'
 import { useAuth } from '../hooks/useCustomHooks'
-import { subscribeToLinks } from '../services/linkService'
+import { subscribeToLinks, migrateLinksToUser } from '../services/linkService'
 import AddLinkForm from '../components/AddLinkForm'
 import EditLinkModal from '../components/EditLinkModal'
 import LinksTable from '../components/LinksTable'
@@ -33,6 +33,21 @@ function AdminDashboard() {
     return unsubscribe
   }, [user])
 
+  // Migrate existing links to current user on login
+  useEffect(() => {
+    if (!user) return
+
+    const runMigration = async () => {
+      try {
+        await migrateLinksToUser(user.uid)
+      } catch (error) {
+        console.error('Failed to migrate links to current user:', error)
+      }
+    }
+
+    runMigration()
+  }, [user])
+
   // Handle logout
   const handleLogout = async () => {
     try {
@@ -57,7 +72,10 @@ function AdminDashboard() {
 
       {/* Mobile Header Bar */}
       <header className="mobile-header">
-        <div className="mobile-brand">Kaliyugawarriors</div>
+        <div className="mobile-brand">
+          <img src="/assets/KaliYuga_Warriors-logo.png" alt="Kaliyugawarriors logo" className="brand-logo" />
+          <span>Kaliyugawarriors</span>
+        </div>
         <button
           className={`mobile-menu-toggle ${sidebarOpen ? 'open' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -78,7 +96,10 @@ function AdminDashboard() {
       <aside className={`sidebar glass ${sidebarOpen ? 'open' : ''} ${sidebarCollapsed ? 'collapsed' : 'expanded'}`}>
         <div className="sidebar-content">
           <div className="sidebar-header">
-            <div className="sidebar-brand">Kaliyugawarriors</div>
+            <div className="sidebar-brand">
+              <img src="/assets/KaliYuga_Warriors-logo.png" alt="Kaliyugawarriors logo" className="brand-logo" />
+              <span>Kaliyugawarriors</span>
+            </div>
             <button
               type="button"
               className="sidebar-close-btn"
@@ -142,10 +163,10 @@ function AdminDashboard() {
 
               <div className="user-info">
                 <div className="user-avatar">
-                  {user?.email?.charAt(0).toUpperCase()}
+                  W
                 </div>
                 <div className="user-details">
-                  <p className="user-name">Admin</p>
+                  <p className="user-name">Warrior</p>
                   <p className="user-email">{user?.email}</p>
                 </div>
               </div>

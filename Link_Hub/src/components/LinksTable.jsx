@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { FaEdit, FaTrash, FaToggleOn, FaToggleOff, FaSearch, FaSpinner, FaStar } from 'react-icons/fa'
+import { FaEdit, FaTrash, FaToggleOn, FaToggleOff, FaSearch, FaSpinner, FaStar, FaDownload } from 'react-icons/fa'
 import { deleteLink, updateLink } from '../services/linkService'
 import { showToast } from './Toast'
 import './LinksTable.css'
@@ -122,6 +122,99 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
   // Get unique months for filter
   const months = [...new Set(links.map(link => link.month ? link.month.substring(0, 7) : ''))].filter(Boolean).sort().reverse()
 
+  // Handle Exporting entire data to CSV
+  const handleExportCSV = () => {
+    if (links.length === 0) {
+      showToast('⚠️ No links available to export', 'error')
+      return
+    }
+
+    // Helper to convert YYYY-MM-DD to a single-quoted string (e.g. '02-Jun-2026)
+    // This forces Microsoft Excel to treat it as plain text, preventing the ######## date formatting issue.
+    const formatDateString = (dateStr) => {
+      if (!dateStr) return ''
+      try {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+          const [year, month, day] = dateStr.split('-')
+          const monthNames = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+          ]
+          const monthName = monthNames[parseInt(month, 10) - 1]
+          return `'${parseInt(day, 10)}-${monthName}-${year}`
+        }
+        if (/^\d{4}-\d{2}$/.test(dateStr)) {
+          const [year, month] = dateStr.split('-')
+          const monthNames = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+          ]
+          const monthName = monthNames[parseInt(month, 10) - 1]
+          return `'${monthName}-${year}`
+        }
+        return `'${dateStr}`
+      } catch (error) {
+        return `'${dateStr}`
+      }
+    }
+
+    // Define the CSV headers
+    const headers = [
+      'Title',
+      'Description',
+      'Category',
+      'Month',
+      'URL',
+      'Instagram Reel URL',
+      'Status',
+      'Featured',
+      'Created At'
+    ]
+
+    // Map the links to CSV rows
+    const rows = links.map(link => [
+      link.title || '',
+      link.description || '',
+      link.category || '',
+      formatDateString(link.month),
+      link.url || '',
+      link.instagramReelUrl || '',
+      link.isPublished ? 'Published' : 'Draft',
+      link.featured ? 'Yes' : 'No',
+      link.createdAt ? new Date(link.createdAt).toISOString() : ''
+    ])
+
+    // Convert rows to CSV string, escaping quotes and commas
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => 
+        row.map(value => {
+          const stringValue = String(value);
+          const escaped = stringValue.replace(/"/g, '""');
+          if (escaped.includes(',') || escaped.includes('\n') || escaped.includes('"') || escaped.includes('\r')) {
+            return `"${escaped}"`;
+          }
+          return escaped;
+        }).join(',')
+      )
+    ].join('\n')
+
+    // Create a Blob from the CSV content
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+
+    // Create a temporary link and trigger the download
+    const downloadLink = document.createElement('a')
+    downloadLink.setAttribute('href', url)
+    downloadLink.setAttribute('download', `kaliyuga_warriors_links_${new Date().toISOString().slice(0, 10)}.csv`)
+    downloadLink.style.visibility = 'hidden'
+    document.body.appendChild(downloadLink)
+    downloadLink.click()
+    document.body.removeChild(downloadLink)
+
+    showToast('🚀 Data exported to CSV successfully!', 'success')
+  }
+
   return (
     <div className="links-table-container glass">
       <div className="table-header">
@@ -190,6 +283,15 @@ function LinksTable({ links, loading, onEdit, onRefresh }) {
             </>
           )}
         </div>
+
+        <button
+          type="button"
+          className="export-csv-btn"
+          onClick={handleExportCSV}
+          title="Backup all links as CSV"
+        >
+          <FaDownload /> Export Backup (CSV)
+        </button>
       </div>
 
       {/* Loading State */}

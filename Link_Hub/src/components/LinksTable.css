@@ -609,3 +609,43 @@
     width: 100%;
   }
 }
+
+/* CSV Export Button Styles */
+.export-csv-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.25rem;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.06);
+  color: #059669;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  margin-left: auto; /* Push it to the right in the flex container */
+}
+
+.export-csv-btn:hover {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);
+}
+
+.export-csv-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .export-csv-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.85rem;
+    margin-left: 0;
+  }
+}
+

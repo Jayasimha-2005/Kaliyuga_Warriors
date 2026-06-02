@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "kaliyugawarriors",
     "public": "dist",
     "ignore": [
       "firebase.json",
